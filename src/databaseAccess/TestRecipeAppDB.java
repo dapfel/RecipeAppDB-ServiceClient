@@ -5,7 +5,10 @@
  */
 package databaseAccess;
 
+import databaseAccess.Recipe.recipeType;
+import databaseAccess.UserProfile.skillLevel;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  *
@@ -16,18 +19,17 @@ public class TestRecipeAppDB {
     public static void main(String[] args) {
         
         DatabaseService db = new DatabaseService();
-        UserProfile user = null;
+        RecipeList recipeList = null;
+        String response = "etwerw";
+        Comment comment = new Comment("dapfel10@gmail.com","sick recipe dude you da man");
         try {
-            user = db.validateSignIn("da@gmail.com","password");
-        }
+        recipeList = db.getUsersRecipes("dapfel10@gmail.com");
+        response = db.addComment(34, comment);
+        } 
         catch (IOException e) {
             e.printStackTrace();
         }
-            
-        if (user == null)
-            System.out.println(user);
-        else
-            System.out.println(user.getEmail());
+        System.out.println(response);
         
     }
     
