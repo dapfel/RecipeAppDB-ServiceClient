@@ -83,6 +83,26 @@ public class DatabaseService {
     }
     
     /**
+     * sends email to user with password
+     * @return if successful - "email sent to " + userEmail.
+     *    if userEmail does not exist - returns null
+     * @throws IOException if error in connection to the server
+     */
+    public String forgotPassword(String userEmail) throws IOException {
+        String url = BASE_URL + "userProfile/forgotPassword/" + userEmail;
+        try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
+            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
+            if (response == null)
+                return null;
+            else
+                return response.getMessage();
+        }
+        catch(IOException e) {
+          throw e;
+        }       
+    }
+    
+    /**
      * add a follower to a user
      * @return if successful - "added follower " + followerEmail + " for " + userEmail.
      *    if userEmail or followerEmail doesn't exist - returns null

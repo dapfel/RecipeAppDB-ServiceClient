@@ -19,12 +19,10 @@ public class TestRecipeAppDB {
     public static void main(String[] args) {
         
         DatabaseService db = new DatabaseService();
-        RecipeList recipeList = null;
         String response = "etwerw";
-        Comment comment = new Comment("dapfel10@gmail.com","sick recipe dude you da man");
         try {
-        recipeList = db.getUsersRecipes("dapfel10@gmail.com");
-        response = db.addComment(34, comment);
+        UserProfile user = db.getUser("dapfel10@gmail.com");
+        response = db.forgotPassword("dapfel10@gmail.com");
         } 
         catch (IOException e) {
             e.printStackTrace();
