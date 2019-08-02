@@ -20,7 +20,7 @@ public class TestRecipeAppDB {
         
         DatabaseService db = new DatabaseService();
         String response = "etwerw";
-        try {
+        try {     
         UserProfile user = db.getUser("dapfel10@gmail.com");
         response = db.forgotPassword("dapfel10@gmail.com");
         } 
