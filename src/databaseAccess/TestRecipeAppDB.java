@@ -19,16 +19,16 @@ public class TestRecipeAppDB {
     public static void main(String[] args) {
         
         DatabaseService db = new DatabaseService();
+        Recipe recipe = null;
         String response = "etwerw";
         try {     
-        UserProfile user = db.getUser("dapfel10@gmail.com");
-        response = db.forgotPassword("dapfel10@gmail.com");
+        recipe = new Recipe("yoyo boog",null,null,"dapfel10@gmail.com",new Date(23423432));
+        response = db.addRecipe(recipe);
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println(response);
-        
     }
     
 }
