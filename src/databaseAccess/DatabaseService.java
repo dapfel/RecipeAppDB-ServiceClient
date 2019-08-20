@@ -225,20 +225,7 @@ public class DatabaseService {
         InputStreamReader reader = null;
         try {
             reader = new InputStreamReader(new URL(url).openStream());
-            Recipe recipe = new Gson().fromJson(reader, Recipe.class);
-            
-            if (recipe != null) {
-                url = BASE_URL + "recipe/getComments/" + recipeID;
-                reader = new InputStreamReader(new URL(url).openStream());
-                CommentList comments = new Gson().fromJson(reader, CommentList.class);
-                recipe.setComments(comments);
-            
-                url = BASE_URL + "recipe/getPictures/" + recipeID;
-                reader = new InputStreamReader(new URL(url).openStream());
-                PictureList pictures = new Gson().fromJson(reader, PictureList.class);
-                recipe.setImages(pictures);
-            }
-            
+            Recipe recipe = new Gson().fromJson(reader, Recipe.class);            
             return recipe;
         }
         catch(IOException e) {
@@ -258,18 +245,6 @@ public class DatabaseService {
         String url = BASE_URL + "recipe/getUsersRecipes/" + email;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
             RecipeList recipes = new Gson().fromJson(reader, RecipeList.class);
-            
-            if (recipes != null) {
-                CommentList comments;
-                PictureList pictures;
-                for (Recipe recipe : recipes) {
-                    comments = getComments(recipe.getRecipeId());
-                    recipe.setComments(comments);
-        
-                    pictures = getPictures(recipe.getRecipeId());
-                    recipe.setImages(pictures);
-                }
-            }
             return recipes;
         }
         catch(IOException e) {
@@ -289,21 +264,8 @@ public class DatabaseService {
         String skillString = skill.name();
         String url = BASE_URL + "recipe/" + skillString + "/" + cuisine + "/" + typeString + "/" + authorEmail;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
-            RecipeList results = new Gson().fromJson(reader, RecipeList.class);
-            
-            if (results != null) {
-                CommentList comments;
-                PictureList pictures;
-                for (Recipe recipe : results) {
-                    comments = getComments(recipe.getRecipeId());
-                    recipe.setComments(comments);
-          
-                    pictures = getPictures(recipe.getRecipeId());
-                    recipe.setImages(pictures);
-                }
-            }
-        
-        return results;
+            RecipeList results = new Gson().fromJson(reader, RecipeList.class);       
+            return results;
         }
         catch (IOException e) {
             throw e;
@@ -380,28 +342,6 @@ public class DatabaseService {
         finally {
             closeResources(connection, reader, writer);
         }
-    }
-    
-    private CommentList getComments (int recipeID)throws IOException {
-        String url = BASE_URL + "recipe/getComments/" + recipeID;
-        try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {  
-            CommentList comments = new Gson().fromJson(reader, CommentList.class);
-            return comments;
-        }
-        catch(IOException e) {
-          throw e;
-        }        
-    }
-    
-    private PictureList getPictures(int recipeID) throws IOException {
-        String url = BASE_URL + "recipe/getPictures/" + recipeID;
-        try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {        
-            PictureList pictures = new Gson().fromJson(reader, PictureList.class);
-            return pictures;
-        }
-        catch(IOException e) {
-          throw e;
-        }        
     }
     
     private void closeResources(HttpURLConnection connection,InputStreamReader reader, OutputStreamWriter writer) {

@@ -22,13 +22,22 @@ public class TestRecipeAppDB {
         Recipe recipe = null;
         String response = "etwerw";
         try {     
-        recipe = new Recipe("yoyo boog",null,null,"dapfel10@gmail.com",new Date(23423432));
-        response = db.addRecipe(recipe);
+        
+        recipe = db.getRecipe(2);
+        response = db.addComment(2,new Comment("dapfel10@gmail.com","yummy!!!!"));
+        
+        recipe = db.getRecipe(2);
+        
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(response);
+        System.out.println(recipe.getName());
+        System.out.println(recipe.getAuthor());
+        System.out.println(recipe.getIngredients().get("mud"));
+        System.out.println(recipe.getCuisines().get(0));
+        System.out.println(recipe.getInstructions().get(0));
+        System.out.println(recipe.getComments().get(0).getComment());        
     }
     
 }
