@@ -23,21 +23,14 @@ public class TestRecipeAppDB {
         String response = "etwerw";
         try {     
         
-        recipe = db.getRecipe(2);
-        response = db.addComment(2,new Comment("dapfel10@gmail.com","yummy!!!!"));
-        
-        recipe = db.getRecipe(2);
-        
+        response = db.addComment(2,new Comment("dapfel10@gmail.com","its so good!!!!"));
+        System.out.println(response);
+        response = db.addPicture(2, new byte[10000]);
+        System.out.println(response);
         } 
         catch (IOException e) {
             e.printStackTrace();
-        }
-        System.out.println(recipe.getName());
-        System.out.println(recipe.getAuthor());
-        System.out.println(recipe.getIngredients().get("mud"));
-        System.out.println(recipe.getCuisines().get(0));
-        System.out.println(recipe.getInstructions().get(0));
-        System.out.println(recipe.getComments().get(0).getComment());        
+        }    
     }
     
 }
