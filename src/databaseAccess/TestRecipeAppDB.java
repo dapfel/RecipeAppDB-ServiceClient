@@ -20,12 +20,17 @@ public class TestRecipeAppDB {
         
         DatabaseService db = new DatabaseService();
         Recipe recipe = null;
-        String response = "etwerw";
+        Recipe recipeResponse = null;
+        String response = "dsfsaf";
         try {     
-        
-        response = db.addComment(2,new Comment("dapfel10@gmail.com","its so good!!!!", "Daniel Apfel"));
+        recipe = new Recipe("chicken", "nice chiken to eat", recipeType.MAIN, skillLevel.PRO,"dapfel10@gmail.com", new Date(System.currentTimeMillis()));
+        recipeResponse = db.addRecipe(recipe);
+        System.out.println(recipeResponse.getDescription());
+        recipe = db.getRecipe(4);
+        System.out.println(recipe.getDescription());
+        response = db.addComment(4,new Comment("dapfel10@gmail.com","its so good!!!!", "Daniel Apfel"));
         System.out.println(response);
-        response = db.addPicture(2, new byte[10000]);
+        response = db.addPicture(4, new byte[10000]);
         System.out.println(response);
         } 
         catch (IOException e) {
