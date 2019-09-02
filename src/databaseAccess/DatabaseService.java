@@ -15,13 +15,16 @@ public class DatabaseService {
         
     /**
      * validate if correct password (on sign-in)
-     * @return if correct - the user's profile. if incorrect username or password - returns null
+     * @return if correct - the user's profile.
+     * @throws Exception if incorrect username or password - with exception message "invalid email or password"
      * @throws IOException if there is a error in connecting to the server
      */
-    public UserProfile validateSignIn(String email, String password) throws IOException {
+    public UserProfile validateSignIn(String email, String password) throws Exception, IOException {
         String url = BASE_URL + "userProfile/signIn/" + email + "/" + password;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
             UserProfile user = new Gson().fromJson(reader, UserProfile.class);
+            if (user == null)
+                throw new Exception("invalid email or password");
             return user;
         }
         catch(IOException e) {
@@ -31,11 +34,11 @@ public class DatabaseService {
     
     /**
      * add a new user to the database (on first sign-up)
-     * @return if successfully added - "added " + user.getEmail() .
-     *         if a profile already exists for the given email - returns null
+     * @return the recipe if successfully added.
+     * @throws Exception if invalid input (such as if a profile already exists for the given email) with exception message "invalid input"
      * @throws IOException if there is a error in connecting to the server
      */
-    public String addUser(UserProfile user, String password) throws IOException {
+    public UserProfile addUser(UserProfile user, String password) throws Exception, IOException {
         String url = BASE_URL + "userProfile/add/" + password;
         HttpURLConnection connection = null;
         OutputStreamWriter writer = null;
@@ -51,12 +54,12 @@ public class DatabaseService {
             writer.flush();
 
             reader = new InputStreamReader(connection.getInputStream());
-            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
+            UserProfile result = new Gson().fromJson(reader, UserProfile.class);
             reader.close();
-            if (response == null)
-                return null;
+            if (result == null)
+                throw new Exception("invalid input");
             else
-                return response.getMessage();
+                return result;
         }
         catch(IOException e) {
             throw e;
@@ -68,14 +71,17 @@ public class DatabaseService {
     
     /**
      * get User profile based on a given email
-     * @return if the user exists - the users profile. if doesn't exist - returns null
+     * @return if the user exists - the users profile
+     * @throws Exception if the user doesn't exist. exception message - "invalid email"
      * @throws IOException if there is an error connecting to the server
      */
-    public UserProfile getUser(String email) throws IOException {
+    public UserProfile getUser(String email) throws Exception, IOException {
         String url = BASE_URL + "userProfile/getUser/" + email;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {            
             UserProfile user = new Gson().fromJson(reader, UserProfile.class);
-            return user;
+            if (user == null)
+                throw new Exception("invalid email");
+            return user; 
         }
         catch(IOException e) {
           throw e;
@@ -85,15 +91,15 @@ public class DatabaseService {
     /**
      * sends email to user with password
      * @return if successful - "email sent to " + userEmail.
-     *    if userEmail does not exist - returns null
+     * @throws Exception if userEmail does not exist. exception message - "invalid email"
      * @throws IOException if error in connection to the server
      */
-    public String forgotPassword(String userEmail) throws IOException {
+    public String forgotPassword(String userEmail) throws Exception, IOException {
         String url = BASE_URL + "userProfile/forgotPassword/" + userEmail;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
             TextMessage response = new Gson().fromJson(reader, TextMessage.class);
             if (response == null)
-                return null;
+                throw new Exception("invalid email");
             else
                 return response.getMessage();
         }
@@ -104,11 +110,11 @@ public class DatabaseService {
     
    /**
      * change the profile picture of an existing User
-     * @return if successfully added - "change profile pic for " + userEmail .
-     *         if no profile exists for the given email - returns null
+     * @return if successfully added - the userProfile with the added pic.
+     * @throws Exception if no profile exists for the given email. exception message - "invalid email"
      * @throws IOException if there is a error in connecting to the server
      */
-    public String changeProfilePic(byte[] picture, String userEmail) throws IOException {
+    public UserProfile changeProfilePic(byte[] picture, String userEmail) throws Exception, IOException {
         String url = BASE_URL + "userProfile/changeProfilePic/" + userEmail;
         HttpURLConnection connection = null;
         OutputStreamWriter writer = null;
@@ -124,12 +130,12 @@ public class DatabaseService {
             writer.flush();
 
             reader = new InputStreamReader(connection.getInputStream());
-            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
+            UserProfile user = new Gson().fromJson(reader, UserProfile.class);
             reader.close();
-            if (response == null)
-                return null;
+            if (user == null)
+                throw new Exception("invalid email");
             else
-                return response.getMessage();
+                return user;
         }
         catch(IOException e) {
             throw e;
@@ -141,18 +147,18 @@ public class DatabaseService {
     
     /**
      * add a follower to a user
-     * @return if successful - "added follower " + followerEmail + " for " + userEmail.
-     *    if userEmail or followerEmail doesn't exist - returns null
+     * @return if successful - the userProfile with the added follower.
+     * @throws Exception if userEmail or followerEmail doesn't exist. exception message - "invalid email"
      * @throws IOException if error in connection to the server
      */
-    public String addFollower(String userEmail, String followerEmail) throws IOException {
+    public UserProfile addFollower(String userEmail, String followerEmail) throws Exception, IOException {
         String url = BASE_URL + "userProfile/addFollower/" + userEmail + "/" + followerEmail;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
-            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
-            if (response == null)
-                return null;
+            UserProfile user = new Gson().fromJson(reader, UserProfile.class);
+            if (user == null)
+                throw new Exception("invalid email");
             else
-                return response.getMessage();
+                return user;
         }
         catch(IOException e) {
           throw e;
@@ -161,18 +167,18 @@ public class DatabaseService {
     
     /**
      * delete a follower from a user
-     * @return if successful - "deleted follower " + followerEmail + " for " + userEmail.
-     *    if userEmail or followerEmail doesn't exist - returns null
+     * @return if successful - the userProfile with deleted follower
+     * @throws Exception if userEmail or followerEmail doesn't exist. exception message - "invalid email"
      * @throws IOException if error in connection to the server
      */
-    public String deleteFollower(String userEmail, String followerEmail) throws IOException {
+    public UserProfile deleteFollower(String userEmail, String followerEmail) throws Exception, IOException {
         String url = BASE_URL + "userProfile/deleteFollower/" + userEmail + "/" + followerEmail;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {          
-            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
-            if (response == null)
-                return null;
+            UserProfile user = new Gson().fromJson(reader, UserProfile.class);
+            if (user == null)
+                throw new Exception("invalid email");
             else
-                return response.getMessage();
+                return user;
         }
         catch(IOException e) {
           throw e;
@@ -182,10 +188,10 @@ public class DatabaseService {
      * add a new recipe to the database
      * don't need to provide recipeID - automatically assigned by the DB (auto-increment)
      * @return if successful - the recipe with the assigned recipeID. 
-     *         if unsuccessful (because of bad input) - returns null
+     * @throws Exception if unsuccessful (because of bad input). exception message "invalid input"
      * @throws IOException if error in connecting to database
      */
-    public Recipe addRecipe(Recipe recipe) throws IOException {
+    public Recipe addRecipe(Recipe recipe) throws Exception, IOException {
         String url = BASE_URL + "recipe/add";
         HttpURLConnection connection = null;
         OutputStreamWriter writer = null;
@@ -203,7 +209,7 @@ public class DatabaseService {
             reader = new InputStreamReader(connection.getInputStream());
             Recipe responseRecipe = new Gson().fromJson(reader, Recipe.class);
             if (responseRecipe == null)
-                return null;
+                throw new Exception("invalid input");
             else
                 return responseRecipe;
         }
@@ -217,15 +223,18 @@ public class DatabaseService {
     
     /**
      * get a recipe based on its ID 
-     * @return if the recipeID exists - returns the recipe. if doesn't exist - returns null
+     * @return if the recipeID exists - returns the recipe.
+     * @throws Exception if recipe doesn't exist. exception message - "invalid recipeID"
      * @throws IOException if there is an error connecting to the server
      */
-    public Recipe getRecipe(int recipeID) throws IOException {
+    public Recipe getRecipe(int recipeID) throws Exception, IOException {
         String url = BASE_URL + "recipe/getRecipe/" + recipeID;
         InputStreamReader reader = null;
         try {
             reader = new InputStreamReader(new URL(url).openStream());
-            Recipe recipe = new Gson().fromJson(reader, Recipe.class);            
+            Recipe recipe = new Gson().fromJson(reader, Recipe.class); 
+            if (recipe == null)
+                throw new Exception("invalid recipeID");
             return recipe;
         }
         catch(IOException e) {
@@ -238,13 +247,16 @@ public class DatabaseService {
     
     /**
      * get all the recipes of a specific user
-     * @return if the user exists - returns the users recipeList. if doesn't exist - returns null
+     * @return if the user exists - returns the users recipeList.
+     * @throws Exception if user doesn't exist. exception message - "invalid email"
      * @throws IOException if there is an error connecting to the server
      */
-    public RecipeList getUsersRecipes(String email) throws IOException {
+    public RecipeList getUsersRecipes(String email) throws Exception, IOException {
         String url = BASE_URL + "recipe/getUsersRecipes/" + email;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
             RecipeList recipes = new Gson().fromJson(reader, RecipeList.class);
+            if (recipes == null)
+                throw new Exception("invalid email");
             return recipes;
         }
         catch(IOException e) {
@@ -256,10 +268,10 @@ public class DatabaseService {
      * get recipes that meet given search parameters.
      * if a parameter can be anything - set to null
      * @return list of recipes that meet the given criteria (the list will be empty if none do).
-     *         returns null if bad input.
+     * @throws Exception if invalid input. exception message - "invalid input"
      * @throws IOException if there is an error connecting to the server
      */
-    public RecipeList searchRecipes(skillLevel skill, String cuisine, recipeType type, String authorEmail, String freeText) throws IOException {
+    public RecipeList searchRecipes(skillLevel skill, String cuisine, recipeType type, String authorEmail, String freeText) throws Exception, IOException {
         String typeString = null;
         if (type != null) 
             typeString = type.name();
@@ -268,7 +280,9 @@ public class DatabaseService {
             skillString = skill.name();
         String url = BASE_URL + "recipe/" + skillString + "/" + cuisine + "/" + typeString + "/" + authorEmail + "/" + freeText;
         try (InputStreamReader reader = new InputStreamReader(new URL(url).openStream())) {
-            RecipeList results = new Gson().fromJson(reader, RecipeList.class);       
+            RecipeList results = new Gson().fromJson(reader, RecipeList.class);  
+            if (results == null)
+                throw new Exception("invalid input");
             return results;
         }
         catch (IOException e) {
@@ -278,11 +292,11 @@ public class DatabaseService {
     
     /**
      * add a comment to a recipe
-     * @return if comment successfully added - "added comment to recipe " + recipeID.
-     *         if recipeID or comment author doesn't exist - returns null
+     * @return if comment successfully added - the recipe with the added comment
+     *  @throws Exception if recipeID or comment author doesn't exist. exception message - "invalid recipeID or comment author"
      * @throws IOException if error connecting to the server
      */
-    public String addComment(int recipeID, Comment comment) throws IOException {
+    public Recipe addComment(int recipeID, Comment comment) throws Exception, IOException {
         String url = BASE_URL + "recipe/addComment/" + recipeID;
         HttpURLConnection connection = null;
         OutputStreamWriter writer = null;
@@ -298,11 +312,11 @@ public class DatabaseService {
             writer.flush();
             
             reader = new InputStreamReader(connection.getInputStream());
-            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
-            if (response == null)
-                return null;
+            Recipe recipe = new Gson().fromJson(reader, Recipe.class);
+            if (recipe == null)
+                throw new Exception("invalid recipeID or comment author");
             else
-                return response.getMessage();
+                return recipe;
         }
         catch(IOException e) {
             throw e;
@@ -314,11 +328,11 @@ public class DatabaseService {
     
     /**
      * add a picture to a recipe
-     * @return if picture successfully added - "picture added to recipe " + recipeID.
-     *         if recipeID doesn't exist - returns null
+     * @return if picture successfully added - the recipe with the added picture.
+     * @throws Exception if recipeID doesn't exist. exception message - "invalid recipeID"
      * @throws IOException if error connecting to the server
      */
-    public String addPicture(int recipeID, byte[] picture) throws IOException {
+    public Recipe addPicture(int recipeID, byte[] picture) throws Exception, IOException {
         String url = BASE_URL + "recipe/addPicture/" + recipeID;
         HttpURLConnection connection = null;
         OutputStreamWriter writer = null;
@@ -334,11 +348,11 @@ public class DatabaseService {
             writer.flush();
             
             reader = new InputStreamReader(connection.getInputStream());
-            TextMessage response = new Gson().fromJson(reader, TextMessage.class);
-            if (response == null)
-                return null;
+            Recipe recipe = new Gson().fromJson(reader, Recipe.class);
+            if (recipe == null)
+                throw new Exception("invalid recipeID");
             else
-                return response.getMessage();
+                return recipe;
         }
         catch(IOException e) {
           throw e;
