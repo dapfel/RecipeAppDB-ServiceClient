@@ -20,18 +20,15 @@ public class TestRecipeAppDB {
         
         DatabaseService db = new DatabaseService();
         Recipe recipe = null;
-        Recipe recipeResponse = null;
-        String response = "dsfsaf";
+        RecipeList recipeResponse = null;
+        String[] cuisines = new String[2];
+        cuisines[0] = "asian"; 
+        cuisines[1] = "european";
         try {     
-        recipe = new Recipe("chicken", "nice chiken to eat", recipeType.MAIN, skillLevel.PRO,"dapfel10@gmail.com", new Date(System.currentTimeMillis()));
-        recipeResponse = db.addRecipe(recipe);
-        System.out.println(recipeResponse.getDescription());
-        recipe = db.getRecipe(4);
-        System.out.println(recipe.getDescription());
-        recipe = db.addComment(4,new Comment("dapfel10@gmail.com","its so good!!!!", "Daniel Apfel"));
-        System.out.println(response);
-        recipe = db.addPicture(4, new byte[10000]);
-        System.out.println(response);
+        recipeResponse = db.searchRecipes(null,cuisines,null,null,null);
+        
+        for (int i = 0; i < recipeResponse.size(); i++)
+            System.out.println(recipeResponse.get(i).getName());
         } 
         catch (Exception e) {
             e.printStackTrace();
