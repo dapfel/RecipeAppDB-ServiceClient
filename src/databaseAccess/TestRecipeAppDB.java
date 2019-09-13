@@ -19,16 +19,16 @@ public class TestRecipeAppDB {
     public static void main(String[] args) {
         
         DatabaseService db = new DatabaseService();
-        Recipe recipe = null;
-        RecipeList recipeResponse = null;
         String[] cuisines = new String[2];
         cuisines[0] = "asian"; 
         cuisines[1] = "european";
+        UserProfile user = null;
         try {     
-        recipeResponse = db.searchRecipes(null,cuisines,null,null,null);
-        
-        for (int i = 0; i < recipeResponse.size(); i++)
-            System.out.println(recipeResponse.get(i).getName());
+        user = db.updateUserProfileString("dapfel10@gmail.com","password","Daniel","Apfel","USA",cuisines,skillLevel.PRO);    
+            
+        user = db.updateUserProfileString("dapfel10@gmail.com",null,null,null,null,null,null);  
+           
+        System.out.println(user.getCuisines().get(0) + "  " + user.getCountry() + user.getCookingSkills());
         } 
         catch (Exception e) {
             e.printStackTrace();
