@@ -23,25 +23,26 @@ public class UserProfile implements Serializable {
         cuisines = new ArrayList<>();
     }
 
-    public UserProfile(String email, String firstName, String lastName, skillLevel cookingSkills, String country, byte[] profilePic) {
+    public UserProfile(String email, String firstName, String lastName, skillLevel cookingSkills, String country, ArrayList<String> cuisines, byte[] profilePic) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.cookingSkills = cookingSkills;
         this.country = country;
         this.profilePic = profilePic;
-        this.cuisines = new ArrayList<>();
+        this.cuisines = cuisines;
         this.followers = new ArrayList<>();
         this.followerOf = new ArrayList<>();
     }
 
-    public UserProfile(String email, String firstName, String lastName, skillLevel cookingSkills, String country, byte[] profilePic, ArrayList<String> followers, ArrayList<String> followerOf) {
+    public UserProfile(String email, String firstName, String lastName, skillLevel cookingSkills, String country, byte[] profilePic, ArrayList<String> cuisines, ArrayList<String> followers, ArrayList<String> followerOf) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.cookingSkills = cookingSkills;
         this.country = country;
         this.profilePic = profilePic;
+        this.cuisines = cuisines;
         this.followers = followers;
         this.followerOf = followerOf;
     }
