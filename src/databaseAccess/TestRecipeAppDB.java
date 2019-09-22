@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package databaseAccess;
 
 import databaseAccess.Recipe.recipeType;
@@ -28,12 +24,10 @@ public class TestRecipeAppDB {
         Comment comment = new Comment("dapfel10@gmail.com", "Sick soup my man!!!", "Daniel Apfel");
         Recipe recipe = new Recipe("chicken soup","really good soup",recipeType.SOUP, skillLevel.INTERMEDIATE,"dapfel10@gmail.com", new Date(System.currentTimeMillis()));
         try {  
-
-            user1 = db.addUser(user1,"password");
             
-        results = db.searchRecipes(null, null, null, null, "soup");
-           
-        System.out.println(results.get(0).getAuthor());
+        results = db.searchRecipes(skillLevel.BEGINNER, null, null, null, null);
+           ;
+        System.out.println(results.get(0).getInstructions().get(0));
         } 
         catch (Exception e) {
             e.printStackTrace();
